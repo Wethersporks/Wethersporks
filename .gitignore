@@ -1,2 +1,8 @@
 # Virtual Environment
 v
+
+# Database
+db.sqlite3
+
+# Cache
+__pycache__
