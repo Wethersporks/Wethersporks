@@ -1,0 +1,181 @@
+* {                         /*makes it so there arent any preset margins*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+}
+body {
+    background-color: yellow;
+    background-image: url(images/bgBlueConcrete.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(2rem, 5vw, 4rem);
+    padding-top: 10px;
+    
+}
+
+.logo {
+    display: flex;
+    width: clamp(100px, 18vw, 150px);
+    height: auto;
+    margin-right: 20px;
+    justify-content: center;
+    align-content: center;
+    
+}
+.weathersporks__title{
+    text-decoration: none;
+    color: white;
+}
+
+.opentimes {
+    position: absolute;
+    right: 20px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 10px;
+    font-size: clamp(1rem, 1.5vw, 2rem);
+    color: black;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between buttons */
+    padding: 20px;
+}
+.nav__button{
+    background-color: white;
+    color: black;
+    padding: 10px 5vw;
+    text-decoration: none; /* Remove underline */
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s; /* Smooth hover effect */
+}
+.nav__button:hover {
+    background-color: #4e629a;
+    color: white;
+  }
+
+
+h1 {
+    display: flex;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: white;
+    font-weight: bold;
+}
+h2{
+   display: flex; 
+   font-size: clamp(1rem, 3vw, 2rem);
+   padding: 10px 20px;
+   color: black;
+}
+main {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+
+.main__container{
+    display: flex;
+    background-color: #fff;
+    border-radius: 15px;
+    width: 50vw;
+    height: 50vh;
+    max-width: 1000px;
+}
+.book__a__table{
+    display: flex;
+    border-radius: 15px;
+    width: 50vw;
+    height: 50vh;
+}
+.main__container__center{
+    display: flex;
+    justify-content: center;
+    width: 25vw;
+    height: auto;
+    padding-top: 15px;
+}
+
+footer {
+    display: flex;
+    background-color: #4e629a;
+    margin-top: auto;
+    justify-content: center;
+    height: 100px;
+
+}
+@media (max-width:768px) {
+    header {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      padding: 1rem;
+      height: auto;
+    }
+    .logo {
+        display: flex;
+        width: clamp(100px, 18vw, 150px);
+        height: auto;
+        margin-right: 20px;
+        justify-content: center;
+        align-content: center;
+        
+    }
+  
+    .opentimes {
+        position: absolute;
+        right: 20px;
+        background-color: white;
+        border-radius: 12px;
+        padding: 5px;
+        font-size: clamp(1rem, 2vw, 3rem);
+        color: black;
+        font-weight: bold;
+    }
+  }
+@media(max-width:525px){
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        height: auto;
+      }
+    .logo {
+        display: flex;
+        width: clamp(100px, 18vw, 150px);
+        height: auto;
+        margin-right: 20px;
+        justify-content: center;
+        align-content: center;
+        
+    }
+    .opentimes {
+        position: absolute;
+        right: 20px;
+        background-color: white;
+        border-radius: 12px;
+        padding: 5px;
+        font-size: clamp(1rem, 2vw, 3rem);
+        color: black;
+        font-weight: bold;
+    }
+}
