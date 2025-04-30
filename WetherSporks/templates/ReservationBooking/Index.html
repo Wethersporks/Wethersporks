@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,13 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wethersporks - Welcome Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
 </head>
 
 <body>
     <header>
         <a href="Index.html">
-            <img src="images/WethersporksLogoWhite.png" alt="WethersporksLogo" class="logo">
+            <img src="{% static 'imgs/WethersporksLogoWhite.png' %}" alt="WethersporksLogo" class="logo">
         </a>
         <h1>
             <a href="Index.html" class="weathersporks__title">Weathersporks</a>
@@ -28,17 +31,36 @@
     <main>
         <div class="main__container">
             <div class="book__a__table">
-                <h2>Book A Table:</h2>
+                
+                {% if not date_selected %}
+                <h2>Pick a day:</h2>
+                {% else %}
+                <h2>Pick a time:</h2>
+                {% endif %}
+
                 <div class="main__container__center">
-                    <ul>
-                        <h2>Date</h2>
-                        <input type="date" name="guestDate" id="guestDate">
-                        <h2>Time</h2>
-                        <a href="#" class="">~~:~~ <img src="images/" alt="Clock icon"></a>
-                        <h2>Guests</h2>
-                        <a href="#" class="">2 <img src="images/" alt="Guests icon"></a>
-                    </ul>
-                    
+                    <form method="get">
+                        <ul>
+                            {% if not date_selected %}
+                            <!-- Date Selection -->
+                            <h2>Date</h2>
+                            <input type="date" name="date" id="guestDate">
+                            {% else %}
+                            <!-- Time & Quantity Selection -->
+                            <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}" alt="Clock icon"></h2>
+                            <input  name="time" type="datetime"/>
+                            
+                            <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}" alt="Guests icon"></h2>
+                            <input name="guestCount" type="number"/>
+
+                            <!-- Used to retain date selected  -->
+                            <input name="date" value="{{date_selected}}" hidden/> 
+                            {% endif %}
+                        </ul>
+                        <br>
+                        <button type="submit">Next</button>
+                    </form>
+
                 </div>
             </div>
 

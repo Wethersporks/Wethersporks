@@ -9,7 +9,7 @@ html{
 }
 body {
     background-color: yellow;
-    background-image: url(images/bgBlueConcrete.jpg);
+    background-image: url(../imgs/bgBlueConcrete.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
