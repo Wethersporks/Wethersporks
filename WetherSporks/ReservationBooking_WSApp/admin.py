@@ -4,8 +4,8 @@ from .models import *
 
 # Register your models here.
 
-admin.site.register(Tables)
-admin.site.register(TimeSlots)
-admin.site.register(Customers)
-admin.site.register(ResStatuses)
-admin.site.register(Reservations)
+admin.site.register(Table)
+admin.site.register(TimeSlot)
+admin.site.register(Customer)
+admin.site.register(ResStatus)
+admin.site.register(Reservation)
