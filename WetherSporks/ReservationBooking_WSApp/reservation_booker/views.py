@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from ..models import *
 
-from ..BookingScheduler import BookingScheduler
+from ..BookingScheduler import BookingScheduler, BookingError
 
 
 from typing import Union
@@ -9,36 +9,39 @@ import datetime
 
 
 
-
 # API-Call Functions 
 
 def reservation_deleter(request, resID):
-    """ Sent here through email """    
+    """ Reservation Booker / ReservationDeleter 
+    Sent here through email """    
+
     # NOTE - This needs to be secured by adding a customer authentication before manipulating this reservation data
     bs = BookingScheduler()
-    bs.cancel_reservation(Reservation.objects.filter(res_id = resID).first())
+    res = bs.cancel_reservation(Reservation.objects.filter(res_id = resID).first())
+    content = {}
 
-    print(f"cancelling reservation: {resID}")
+    if isinstance(res, BookingError):
+        content.update({
+            "error": res.msg
+        })
 
-
-
-def availability(request):
-    pass
+    return render(request, "ReservationBooking/ReservationCancelled.html", content)
+    
 
 
 
 def reservation_selector(request):
-    """ Home-Page """
+    """ Reservation Booker / Reservation Selector Component """
  
-
     bs = BookingScheduler()
 
+    content = {}
 
     if "time" in request.GET:
         time_selected = request.GET["time"]
         quantity = request.GET["guestCount"]
         date_selected = request.GET["date"]
-        _ = request.GET["email"]
+        email = request.GET["email"]
 
 
         # Keeping the customer creation for scalability
@@ -47,9 +50,11 @@ def reservation_selector(request):
             test_customer = Customer(name="Josh", number="0784921323", email="100715281@unimail.derby.ac.uk")
             test_customer.save()
 
-        bs.append_reservation(test_customer, quantity, date_selected, time_selected)
-
-    
+        res = bs.append_reservation(test_customer, quantity, date_selected, time_selected)
+        if isinstance(res, BookingError):
+            content.update({
+                "error": res.msg
+            })
 
 
     elif "date" in request.GET:
@@ -59,12 +64,12 @@ def reservation_selector(request):
         available_timeslots = [ts.start_time.strftime("%H:%M") for ts in TimeSlot.objects.filter(start_date=date_selected)]
         
         
-        return render(request, "ReservationBooking/ReservationSelector.html",
-                       {"date_selected":date_selected,
-                        "email_inputted":email_inputted,
-                        "timeslots":available_timeslots
-                        })
+        content = {
+            "date_selected":date_selected,
+            "email_inputted":email_inputted,
+            "timeslots":available_timeslots
+        }
 
 
     
-    return render(request, "ReservationBooking/ReservationSelector.html")
+    return render(request, "ReservationBooking/ReservationSelector.html", content)

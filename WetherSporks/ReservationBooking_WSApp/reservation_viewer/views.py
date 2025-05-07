@@ -1,44 +1,13 @@
 from django.shortcuts import render
-from ..models import *
+from ..models import (TimeSlot, Table, Customer, ResStatus, Reservation)
 import datetime
 from typing import Union
+from .ModelInstanceCreator import ModelInstanceCreator
+from ..BookingScheduler import (BookingScheduler, BookingError)
 
 
 
 
-
-
-class ModelInstanceCreator:
-    """ Generates user-defined django model instances - each factory takes related parameters for its model """
-    
-    DEFAULT_DURATION_HOURS = 1
-    
-    def __init__(self):
-        pass
-
-
-    def timeslot_factory(self, start_time:datetime.datetime, duration:float) -> Union[TimeSlot, None]:
-        """ Factory - Creates a TimeSlot & sets relationship with tables. """
-
-        duration = datetime.timedelta(hours=duration)
-        end_time = start_time + duration
-     
-        # Create Timeslot instance
-        timeslot:TimeSlot = TimeSlot(
-            start_date=start_time.date(),
-            start_time=start_time.time(),
-            duration=duration,
-            end_time = end_time
-        )
-        # Saves timeslot into DB
-        timeslot.save()
-
-        # Relationship between a time-slot and all tables
-        tables = Table.objects.all()
-        timeslot.tables.set(tables)
-
-        return timeslot
-        
 
 
 # VIEWS
@@ -64,22 +33,53 @@ def timeslot_generator(request):
 
     mic = ModelInstanceCreator() # mic the Factory provider - This is effectively a scalable version of 'TimeslotCreator'
 
-
+    timeslots:list = []
     for i in range(int(hours_open_for)):
         # TimeSlot for each hour
         timeslot_offset = datetime.timedelta(hours=SLOT_DURATION_HOURS*i)
         timeslots_datetime = open_time + timeslot_offset
         timeslot:TimeSlot = mic.timeslot_factory(timeslots_datetime, SLOT_DURATION_HOURS)
+        timeslots.append(timeslot)
 
     print("Created timeslots today")
 
+    return render(request, "Reservationviewing/TimeslotGenerator.html", {
+        "start":open_time, "end":close_time, "timeslots":timeslots 
+    })
 
 
 def reservation_updater(request, resID):
-    pass
+    """ Bookings Handler / Bookings Updater """
+
+    reservation = Reservation.objects.filter(res_id = resID).first()
+    content = {}
+    if reservation:
+        bs = BookingScheduler()
+
+
+        if "new_date" in request.GET:
+            content.update({"reservation_details": bs.get_reservation_details(reservation)})
+        
+            res = bs.update_reservation(
+                reservation, 
+                request.GET["new_date"],
+                request.GET["new_time"],
+                request.GET["guest_count"]
+                )
+        
+        
+        content.update({
+            "start_date": str(datetime.datetime.strftime(reservation.timeslot.start_date, "%Y-%m-%d")), 
+            "start_time": str(reservation.timeslot.start_time.strftime("%H:%M:%S")), 
+            "guest_count": reservation.guest_count
+            })
+
+
+    return render(request, "Reservationviewing/ReservationUpdater.html", content)
+
 
 def dashboard(request):
-
+    """ Bookings Handler / Bookings Dashboard """
     date:datetime.datetime
 
     if "date" in request.GET and request.GET["date"] != "":
@@ -93,8 +93,7 @@ def dashboard(request):
                 Reservation.objects.filter(timeslot=ts)
             )
             for ts in TimeSlot.objects.filter(start_date=date)]
-    
-    # timeslots = TimeSlot.objects.filter(start_date=date)
+
      
     # localhost:8000/reservation/book/cancel/6
 

@@ -40,6 +40,9 @@
 
                 <div class="main__container__center">
                     <form method="get">
+                        {% if error %}
+                            <p style="color: red;">{{error}}</p>
+                        {% endif %}
                         <ul>
                             {% if not date_selected %}
                             <!-- Date Selection -->

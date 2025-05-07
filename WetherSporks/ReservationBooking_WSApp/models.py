@@ -22,6 +22,9 @@ class TimeSlot(models.Model):
     tables = models.ManyToManyField("Table", through="TimeSlotTable")  # models.ForeignKey(Table, on_delete=models.CASCADE) #FK
     end_time = models.TimeField() # Needed for checking tables in time frame
 
+    def __str__(self):
+        return f"[{self.start_date}] {self.start_time} - {self.end_time}"
+
     def occupy_table(self, table:Table):
         """ Takes table instances and removes from the available tables list """
         self.tables.remove(table)

@@ -1,6 +1,6 @@
 from typing import Union
 from .models import (TimeSlot, Table, Customer, ResStatus, Reservation)
-from django.db.models import Min
+from django.db.models import Min # type: ignore
 from .reservation_booker.emailer import send_email
 
 
@@ -16,7 +16,6 @@ class BookingScheduler:
         return TimeSlot.objects.filter(start_date=date,
                                 start_time=time
                                 ).first()
-        # tables_used_in_timeslot = TimeSlot.objects.filter(start_date__gte=date, start_time__gte=time, end_time__lte=end_time)
 
     def get_available_table(self, quantity, time_slot=Union[TimeSlot, None], date:Union[str, None]=None, time=Union[str, None]) -> Union[Table, None]:
         """ Gets an available Table Instance from a timeslot given the seat quantity """
@@ -58,6 +57,10 @@ class BookingScheduler:
         time_slot:TimeSlot = self.get_timeslot(date, time)
         
         if time_slot:
+            if Reservation.objects.filter(customer=customer, timeslot=time_slot).first():
+                # Reservation already made under this customer at this time
+                return BookingError(f"{customer} has already made reservation at {time_slot}")
+
             print(f"{time_slot} at {time_slot.start_time}-{time_slot.end_time} \
                   \nhas {time_slot.tables.count()} tables: {time_slot.tables.all()}")
             
@@ -76,7 +79,7 @@ class BookingScheduler:
                 time_slot.occupy_table(table)
                 time_slot.save()
 
-                EMAILING_SYSTEM_ON = False
+                EMAILING_SYSTEM_ON = True
                 if EMAILING_SYSTEM_ON:
                     send_email(customer.email, 
                             data=f"""Your reservation has been booked! 
@@ -88,6 +91,7 @@ class BookingScheduler:
 
                 print(f"[{self.append_reservation.__name__}]: Successfully saved reservation")
             else:
+                # Availability Checker - REFER TO COMPONENT DIAGRAM
                 return BookingError(f"No Available Tables Found {date} - {time} doesnt exist")
                 
         else:
@@ -95,29 +99,37 @@ class BookingScheduler:
             return BookingError(f"Time slot at {date} - {time} doesnt exist")
             
 
-    def update_reservation(self, reservation:Reservation, new_date, new_time, guest_count:int=0) -> None:
+    def update_reservation(self, reservation:Reservation, new_date, new_time, guest_count:int=0) -> Union[BookingError, None]:
         """ Update timeslot and/or guest count for an existing reservation """
-        new_timeslot:TimeSlot = self.get_timeslot(new_date, new_time)
-        if new_timeslot:
-            reservation.timeslot = new_timeslot
+        if reservation:
+            new_timeslot:TimeSlot = self.get_timeslot(new_date, new_time)
+            if new_timeslot:
+                reservation.timeslot.unoccupy_table(reservation.table)
+                table:Table = self.get_available_table(int(guest_count), new_timeslot)
+                reservation.table = table
+                new_timeslot.occupy_table(table)
+                new_timeslot.save()
+                reservation.timeslot = new_timeslot
+
+            else:
+                return BookingError(f"Timeslot doesn't exist for {new_date} {new_time}")
+            if guest_count != 0:
+                # Request to change guest_count
+                # Cannot have a guest count of 0. This is default for this function call so doesn't need to be specified (may only change timeslot)
+                reservation.guest_count = int(guest_count)
+            reservation.save()
         else:
-            print(f"[{self.update_reservation.__name__}]: Timeslot doesn't exist for {new_date} {new_time}")
-            return
-        if guest_count != 0:
-            # Request to change guest_count
-            # Cannot have a guest count of 0. This is default for this function call so doesn't need to be specified (may only change timeslot)
-            reservation.guest_count = guest_count
-        reservation.save()
+            return BookingError("reservation doesnt exist")
 
 
-    def cancel_reservation(self, reservation:Reservation) -> None:
+    def cancel_reservation(self, reservation:Union[Reservation,None]) -> Union[BookingError, None]:
         """ Takes Reservation Instance - Changes reservation status to 'Cancelled' & re-adds table to appropriate timeslot """
         if reservation:
             reservation.status = ResStatus.objects.filter(status="Cancelled").first()
             reservation.save()
             reservation.timeslot.tables.add(reservation.table)
         else:
-            print(f"[{self.update_reservation.__name__}]: Reservation NOT FOUND")
+            return BookingError("Reservation Doesnt Exist")
 
 
     def get_reservation_details(self, reservation:Reservation) -> tuple:
