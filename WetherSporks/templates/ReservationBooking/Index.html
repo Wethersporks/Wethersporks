@@ -44,17 +44,22 @@
                             {% if not date_selected %}
                             <!-- Date Selection -->
                             <h2>Date</h2>
-                            <input type="date" name="date" id="guestDate">
+                            <input type="date" name="date" id="guestDate" required/>
+
+                            <h2>Email</h2>
+                            <input type="email" name="email" id="email" required/>
+
                             {% else %}
                             <!-- Time & Quantity Selection -->
                             <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}" alt="Clock icon"></h2>
-                            <input  name="time" type="datetime"/>
+                            <input name="time" type="datetime" required/>
                             
                             <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}" alt="Guests icon"></h2>
-                            <input name="guestCount" type="number"/>
+                            <input name="guestCount" type="number" required/>
 
-                            <!-- Used to retain date selected  -->
+                            <!-- Used to retain date & email inputted  -->
                             <input name="date" value="{{date_selected}}" hidden/> 
+                            <input name="email" value="{{email_inputted}}" hidden/>
                             {% endif %}
                         </ul>
                         <br>

@@ -20,4 +20,6 @@ from . import views
 
 urlpatterns = [
     path("", views.index),
+    path("TimeslotGenerator", views.timeslot_generator),
+    path("cancel/<int:resID>", views.cancel_reservation),
 ]
