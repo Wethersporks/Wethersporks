@@ -70,12 +70,16 @@ class BookingScheduler:
                 reservation.save()
                 time_slot.occupy_table(table)
                 time_slot.save()
-                send_email(customer.email, 
-                        data=f"""Your reservation has been booked! 
-                        To cancel: localhost:8000/reservation/book/cancel/{reservation.res_id}
-                        """,
-                        subject="WetherSporks Reservation Booking"
-                        )
+
+                EMAILING_SYSTEM_ON = False
+                if EMAILING_SYSTEM_ON:
+                    send_email(customer.email, 
+                            data=f"""Your reservation has been booked! 
+                            To cancel: localhost:8000/reservation/book/cancel/{reservation.res_id}
+                            """,
+                            subject="WetherSporks Reservation Booking"
+                            )
+                print(f"to cancel go to 'localhost:8000/reservation/book/cancel/{reservation.res_id}'")
 
                 print(f"[{self.append_reservation.__name__}]: Successfully saved reservation")
             else:
