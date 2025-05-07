@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from ..models import *
+
 from ..BookingScheduler import BookingScheduler
 
 
@@ -9,11 +10,9 @@ import datetime
 
 
 
-
-
 # API-Call Functions 
 
-def cancel_reservation(request, resID):
+def reservation_deleter(request, resID):
     """ Sent here through email """    
     # NOTE - This needs to be secured by adding a customer authentication before manipulating this reservation data
     bs = BookingScheduler()
@@ -28,7 +27,7 @@ def availability(request):
 
 
 
-def index(request):
+def reservation_selector(request):
     """ Home-Page """
  
 
@@ -56,11 +55,16 @@ def index(request):
     elif "date" in request.GET:
         date_selected  = request.GET["date"]
         email_inputted = request.GET["email"]
-        return render(request, "ReservationBooking/Index.html",
+
+        available_timeslots = [ts.start_time.strftime("%H:%M") for ts in TimeSlot.objects.filter(start_date=date_selected)]
+        
+        
+        return render(request, "ReservationBooking/ReservationSelector.html",
                        {"date_selected":date_selected,
-                        "email_inputted":email_inputted
+                        "email_inputted":email_inputted,
+                        "timeslots":available_timeslots
                         })
 
 
-
-    return render(request, "ReservationBooking/Index.html")
+    
+    return render(request, "ReservationBooking/ReservationSelector.html")

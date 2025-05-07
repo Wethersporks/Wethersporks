@@ -1,0 +1,41 @@
+<h1>Dashboard</h1>
+
+<form method="get">
+    <label>Select a date:</label>
+    <input type="date" name="date"/>
+    <button>See Dates Timeslots</button>
+</form>
+
+<h2> Todays Reservations: {{date}} </h2>
+<!-- TIMESLOTS -->
+{% for timeslot in timeslots %}
+    <hr>
+    <h3>{{timeslot.0.start_time}}-{{timeslot.0.end_time}}</h3>
+    
+    <!-- RESERVATIONS -->
+    <br>    
+    {% if timeslot.2 %}
+        <h4>Reservations Made</h4>
+        <ul>
+            {% for res in timeslot.2 %}
+                <li>
+                    {{res}}
+                </li>
+            {% endfor %}
+
+        </ul>
+        <br>
+    {% endif %}
+
+    <!-- REMAINING FREE TABLES FOR TIMESLOT -->
+    <h4>Available Tables Remaining</h4>
+    <ul>
+        {% for table in timeslot.1 %}
+            <li>
+                Table {{ table }}
+            </li>   
+        {% endfor %}
+    </ul>
+    <br>
+    <br>
+{% endfor %}

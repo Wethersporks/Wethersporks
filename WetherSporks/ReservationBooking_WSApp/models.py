@@ -4,6 +4,8 @@ from django.db import models
 # DJANGO MODEL - Module provides CRUD Operations for each MODEL! 
 # Refer to Component Diagram for "Django Model CRUD"
 
+DATE_INPUT_FORMATS = ["%d/%m/%Y"]
+
 class Table(models.Model):
     table_no = models.IntegerField()
     seat_count = models.IntegerField()
@@ -12,7 +14,8 @@ class Table(models.Model):
         return f"{self.table_no} ({self.seat_count} seats)"
 
 
-class TimeSlot(models.Model):      # TODO: Make factory for
+class TimeSlot(models.Model):
+    """ These are generated throught Timeslot Factory """
     start_date = models.DateField()
     start_time = models.TimeField()
     duration = models.DurationField(null=False)
@@ -44,6 +47,8 @@ class Customer(models.Model):
 class ResStatus(models.Model):
     status = models.CharField(max_length=9)
 
+    def __str__(self):
+        return self.status
 
 class Reservation(models.Model):    
     # res_id: Used for referencing in cancellations 
@@ -58,8 +63,8 @@ class Reservation(models.Model):
 
 
     def __str__(self) -> str:
-        return f"{self.customer} has booking for {self.guest_count} on table {self.table} \
-                at {self.timeslot.start_date}-{self.timeslot.end_time}" 
+        return f"{self.customer} has booking for {self.guest_count} people - is assigned table {self.table} \
+                from {self.timeslot.start_date} - {self.timeslot.end_time}      STATUS={self.status}" 
 
     def __iter__(self):
         """ For casting to tuple in BookingScheduler.get_reservation_details """

@@ -52,7 +52,12 @@
                             {% else %}
                             <!-- Time & Quantity Selection -->
                             <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}" alt="Clock icon"></h2>
-                            <input name="time" type="datetime" required/>
+                            
+                            <select name="time" type="datetime" required>
+                                {% for timeslot in timeslots %}
+                                <option value="{{timeslot}}">{{timeslot}}</option>
+                                {% endfor %}
+                            </select>
                             
                             <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}" alt="Guests icon"></h2>
                             <input name="guestCount" type="number" required/>

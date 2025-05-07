@@ -37,7 +37,6 @@ class ModelInstanceCreator:
         tables = Table.objects.all()
         timeslot.tables.set(tables)
 
-        print(timeslot.tables.all())
         return timeslot
         
 
@@ -72,7 +71,31 @@ def timeslot_generator(request):
         timeslots_datetime = open_time + timeslot_offset
         timeslot:TimeSlot = mic.timeslot_factory(timeslots_datetime, SLOT_DURATION_HOURS)
 
+    print("Created timeslots today")
 
 
 
+def reservation_updater(request, resID):
+    pass
 
+def dashboard(request):
+
+    date:datetime.datetime
+
+    if "date" in request.GET and request.GET["date"] != "":
+        date = datetime.datetime.strptime(request.GET["date"], "%Y-%m-%d")
+    else:
+        date = datetime.datetime.today()
+    # Each timeslot passed into template is in Tuple (TimeSlot Instance, [Timeslots tables instances], [Timeslots Reservation Instances])
+    data = [(
+                ts, 
+                ts.tables.all(), 
+                Reservation.objects.filter(timeslot=ts)
+            )
+            for ts in TimeSlot.objects.filter(start_date=date)]
+    
+    # timeslots = TimeSlot.objects.filter(start_date=date)
+     
+    # localhost:8000/reservation/book/cancel/6
+
+    return render(request, "Reservationviewing/Dashboard.html", {"timeslots":data, "date":date})

@@ -1,8 +1,13 @@
 from typing import Union
 from .models import (TimeSlot, Table, Customer, ResStatus, Reservation)
 from django.db.models import Min
-from reservation_booker.emailer import send_email
+from .reservation_booker.emailer import send_email
 
+
+
+class BookingError:
+    def __init__(self, msg):
+        self.msg = msg
 
 class BookingScheduler:
     
@@ -49,7 +54,7 @@ class BookingScheduler:
     
 
 
-    def append_reservation(self, customer:Customer, guest_count, date, time) -> None:
+    def append_reservation(self, customer:Customer, guest_count, date, time) -> Union[BookingError, None]:
         time_slot:TimeSlot = self.get_timeslot(date, time)
         
         if time_slot:
@@ -83,11 +88,12 @@ class BookingScheduler:
 
                 print(f"[{self.append_reservation.__name__}]: Successfully saved reservation")
             else:
-                print(f"Time slot at {date} - {time} doesnt exist")    
-
+                return BookingError(f"No Available Tables Found {date} - {time} doesnt exist")
+                
         else:
             # Timeslot not generated in system 
-            print(f"Time slot at {date} - {time} doesnt exist")
+            return BookingError(f"Time slot at {date} - {time} doesnt exist")
+            
 
     def update_reservation(self, reservation:Reservation, new_date, new_time, guest_count:int=0) -> None:
         """ Update timeslot and/or guest count for an existing reservation """
@@ -108,6 +114,7 @@ class BookingScheduler:
         """ Takes Reservation Instance - Changes reservation status to 'Cancelled' & re-adds table to appropriate timeslot """
         if reservation:
             reservation.status = ResStatus.objects.filter(status="Cancelled").first()
+            reservation.save()
             reservation.timeslot.tables.add(reservation.table)
         else:
             print(f"[{self.update_reservation.__name__}]: Reservation NOT FOUND")
