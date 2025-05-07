@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import *
-
+from django.db.models import Min
 from typing import Union
 import datetime
 
@@ -8,33 +8,39 @@ import datetime
 class BookingScheduler:
     
 
-    def check_availability(self, date, time, quantity, tableNo:int) -> bool:
-        """ """
+    def get_available_table(self, date,time, quantity) -> Union[int, None]:
+        """ Gets an available table ID from a timeslot given the seat quantity """
+
+        timeslot = TimeSlot.objects.filter(start_date=date,
+                                           start_time=time
+                                           ).first()
+        suitable_tables_in_timeslot = timeslot.tables.all().filter(seat_count__gte=int(quantity)) # USE .REMOVE() to remove table from timeslot on successful booking
+        
+        # Picks the table with the least seats - this table is suitable for the requested quantity & saves larger tables for other bookings (potentially larger bookings)
+        most_suitable_table = suitable_tables_in_timeslot.filter().annotate(Min("seat_count")).order_by("seat_count")[0]
+        print(most_suitable_table)
+
+
+    def check_availability(self, date, time, quantity) -> bool:
+        """ Determines if timeslot has availability given the seating quantity """
       
-        start_datetime = datetime.datetime.combine(date, time)
+        timeslot = TimeSlot.objects.filter(start_date=date,
+                                           start_time=time
+                                           ).first()
+        suitable_tables_in_timeslot = timeslot.tables.all().filter(seat_count__gte=int(quantity)) # USE .REMOVE() to remove table from timeslot on successful booking
 
 
-        duration=datetime.timedelta(hours=self.DEFAULT_DURATION_HOURS)
-        end_time = start_datetime + duration
+        print(suitable_tables_in_timeslot)
+        print(len(suitable_tables_in_timeslot))
+        return len(suitable_tables_in_timeslot) != 0
+    
         
-        tables_used_in_timeslot = TimeSlot.objects.filter(start_date__gte=date, 
-                                                           start_time__gte=time, 
-                                                           end_time__lte=end_time)
+        # tables_used_in_timeslot = TimeSlot.objects.filter(start_date__gte=date, 
+        #                                                    start_time__gte=time, 
+        #                                                    end_time__lte=end_time)
 
-        
-        print(tables_used_in_timeslot)
-        for tbl in list(tables_used_in_timeslot):
-            print(f"Table: {tbl.table}; is in use - at {tbl.start_date} {tbl.start_time} for {tbl.duration}")
+    
 
-
-
-    def get_available_table(self, date:str, time:str, quantity) -> Union[int, None]:
-        """ Returns table ID if available, else returns None if none avaiable """
-        
-        slot_has_availability = self.check_availability(start_date[0], start_time[0], quantity)
-
-        suitable_tables = Table.objects.filter(seat_count__gte=int(quantity))
-        
 
 
 
@@ -108,15 +114,20 @@ def index(request):
     """ Home-Page """
     f = ModelInstanceCreator()
 
+    bs = BookingScheduler()
 
     # Trigger time slot generation (time slots for today)
-    create_time_slots()
+    #create_time_slots()
 
 
     if "time" in request.GET:
         time_selected = request.GET["time"]
         quantity = request.GET["guestCount"]
         date_selected = request.GET["date"]
+
+        bs.get_available_table(date_selected, time_selected, quantity)
+        bs.check_availability(date_selected, time_selected, quantity)
+        
 
         print(f"Time Picked: {time_selected} for {quantity} people on {date_selected}")
         
