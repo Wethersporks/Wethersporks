@@ -16,10 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+
+
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from .reservation_booker import views as online_res_booker_views
+from .reservation_viewer import views as waitstaff_res_viewer_views
+
 
 urlpatterns = [
-    path("", views.index),
-    path("TimeslotGenerator", views.timeslot_generator),
-    path("cancel/<int:resID>", views.cancel_reservation),
+    # ONLINE BOOKING URLS
+    path("book/", online_res_booker_views.index),
+    path("book/cancel/<int:resID>", online_res_booker_views.cancel_reservation),
+
+
+    # WAITSTAFFS VIEWER URLS
+    path("view/TimeslotGenerator", waitstaff_res_viewer_views.timeslot_generator),
+
+
 ]

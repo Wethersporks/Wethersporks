@@ -18,6 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("book-reservation/", include("ReservationBooking_WSApp.urls")),     # All Views in Reservation Booking App
+    path("reservation/", include("ReservationBooking_WSApp.urls")),     # All Views in Reservation Booking App
     path('admin/', admin.site.urls),
 ]

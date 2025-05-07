@@ -46,6 +46,9 @@ class ResStatus(models.Model):
 
 
 class Reservation(models.Model):    
+    # res_id: Used for referencing in cancellations 
+    res_id = models.AutoField(primary_key=True)
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE) # FK
     guest_count = models.IntegerField(default=1)
     

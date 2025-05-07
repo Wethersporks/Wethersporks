@@ -7,3 +7,6 @@ db.sqlite3
 # Cache
 __pycache__
 migrations
+
+# passwords
+app_passwords*
