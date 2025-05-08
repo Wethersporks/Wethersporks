@@ -12,7 +12,7 @@ import datetime
 # API-Call Functions 
 
 def reservation_deleter(request, resID):
-    """ Reservation Booker / ReservationDeleter 
+    """ Reservation Booker / ReservationDeleter (Cancellation)
     Sent here through email """    
 
     # NOTE - This needs to be secured by adding a customer authentication before manipulating this reservation data
@@ -41,10 +41,11 @@ def reservation_selector(request):
         time_selected = request.GET["time"]
         quantity = request.GET["guestCount"]
         date_selected = request.GET["date"]
-        email = request.GET["email"]
+        
+        # Email from form is temp paused while devloping - Default email is inserted below
+        _ = request.GET["email"]
 
-
-        # Keeping the customer creation for scalability
+        # Creating or selecting customer instance into database
         test_customer:Customer = Customer.objects.filter(name="Josh", number="0784921323", email="100715281@unimail.derby.ac.uk").first()
         if not test_customer:
             test_customer = Customer(name="Josh", number="0784921323", email="100715281@unimail.derby.ac.uk")
@@ -61,7 +62,8 @@ def reservation_selector(request):
         date_selected  = request.GET["date"]
         email_inputted = request.GET["email"]
 
-        available_timeslots = [ts.start_time.strftime("%H:%M") for ts in TimeSlot.objects.filter(start_date=date_selected)]
+        # Selects all time slots for this day if has free tables left over.
+        available_timeslots = [ts.start_time.strftime("%H:%M") for ts in TimeSlot.objects.filter(start_date=date_selected) if (ts.tables.count() > 0)]
         
         
         content = {
