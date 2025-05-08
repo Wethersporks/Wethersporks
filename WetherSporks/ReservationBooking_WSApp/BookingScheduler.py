@@ -9,8 +9,20 @@ class BookingError:
     def __init__(self, msg):
         self.msg = msg
 
-class BookingScheduler:
+class BookingScheduler(object):
     
+    def __new__(cls):
+        """ SINGLETON FUNCTIONALITY """
+        if not hasattr(cls, "instance"):
+            print("[BOOKING SCHEDULER]: Creating ONE instance of BookingScheduler")
+            cls.instance = super(BookingScheduler, cls).__new__(cls)
+        else:
+            print("[BOOKING SCHEDULER] Instance already created")
+        return cls.instance
+
+
+
+
     def __get_timeslot(self, date,time) -> Union[TimeSlot, None]:
         """ Returns timeslot within given date & time """
         return TimeSlot.objects.filter(start_date=date,
