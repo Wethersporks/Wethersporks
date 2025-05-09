@@ -9,29 +9,38 @@ class BookingError:
     def __init__(self, msg):
         self.msg = msg
 
-class BookingScheduler:
+class BookingScheduler(object):
     
-    def get_timeslot(self, date,time) -> Union[TimeSlot, None]:
+    def __new__(cls):
+        """ SINGLETON FUNCTIONALITY """
+        if not hasattr(cls, "instance"):
+            print("[BOOKING SCHEDULER]: Creating ONE instance of BookingScheduler")
+            cls.instance = super(BookingScheduler, cls).__new__(cls)
+        else:
+            print("[BOOKING SCHEDULER] Instance already created")
+        return cls.instance
+
+
+
+
+    def __get_timeslot(self, date,time) -> Union[TimeSlot, None]:
         """ Returns timeslot within given date & time """
         return TimeSlot.objects.filter(start_date=date,
                                 start_time=time
                                 ).first()
 
-    def get_available_table(self, quantity, time_slot=Union[TimeSlot, None], date:Union[str, None]=None, time=Union[str, None]) -> Union[Table, None]:
-        """ Gets an available Table Instance from a timeslot given the seat quantity """
+    def get_available_table(self, quantity, time_slot=Union[TimeSlot, None], date:Union[str, None]=None, time=Union[str, None]) -> Union[Table, BookingError]:
+        """ Gets the most suitable Table Instance from a timeslot given the seat quantity """
 
         if not time_slot:
             if date and time:
                 time_slot = TimeSlot.objects.filter(start_date=date,
-                                                start_time=time
-                        ).first()
+                                                    start_time=time).first()
             else:
-                print("[get_available_table]: MUST SPECIFY EITHER DATE STRING OR A TIMESLOT INSTANCE")
-                return None
+                return BookingError("Must specify either date string or a timeslot instance")
         
         time_slot_tables = time_slot.tables.all()
         suitable_tables_in_timeslot = time_slot_tables.filter(seat_count__gte=int(quantity)) # USE .REMOVE() to remove table from timeslot on successful booking
-
 
         # Picks the table with the least seats - this table is suitable for the requested quantity & saves larger tables for other bookings (potentially larger bookings)
         most_suitable_table = suitable_tables_in_timeslot.filter().annotate(Min("seat_count")).order_by("seat_count").first()
@@ -44,17 +53,14 @@ class BookingScheduler:
         timeslot = TimeSlot.objects.filter(start_date=date,
                                            start_time=time
                                            ).first()
-        suitable_tables_in_timeslot = timeslot.tables.all().filter(seat_count__gte=int(quantity)) # USE .REMOVE() to remove table from timeslot on successful booking
+        suitable_tables_in_timeslot = timeslot.tables.all().filter(seat_count__gte=int(quantity))
 
-
-        print(suitable_tables_in_timeslot)
-        print(len(suitable_tables_in_timeslot))
         return len(suitable_tables_in_timeslot) != 0
     
 
 
     def append_reservation(self, customer:Customer, guest_count, date, time) -> Union[BookingError, None]:
-        time_slot:TimeSlot = self.get_timeslot(date, time)
+        time_slot:TimeSlot = self.__get_timeslot(date, time)
         
         if time_slot:
             if Reservation.objects.filter(customer=customer, timeslot=time_slot).first():
@@ -102,7 +108,7 @@ class BookingScheduler:
     def update_reservation(self, reservation:Reservation, new_date, new_time, guest_count:int=0) -> Union[BookingError, None]:
         """ Update timeslot and/or guest count for an existing reservation """
         if reservation:
-            new_timeslot:TimeSlot = self.get_timeslot(new_date, new_time)
+            new_timeslot:TimeSlot = self.__get_timeslot(new_date, new_time)
             if new_timeslot:
                 reservation.timeslot.unoccupy_table(reservation.table)
                 table:Table = self.get_available_table(int(guest_count), new_timeslot)
