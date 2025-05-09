@@ -73,3 +73,16 @@ def reservation_selector(request):
 
     
     return render(request, "ReservationBooking/ReservationSelector.html", content)
+
+def dashboard(request):
+    return render(request, 'Dashboard.html')
+
+def booking(request):
+    return render(request, 'ReservationSelector.html')
+
+def welcome(request):
+    return render(request, 'WElcomePage.html')
+
+def contact(request):
+    return render(request, 'ContactPage.html')
+

@@ -26,13 +26,17 @@ from .reservation_viewer import views as waitstaff_res_viewer_views
 
 urlpatterns = [
     # ONLINE BOOKING URLS
-    path("book/", online_res_booker_views.reservation_selector),
+    path("book/", online_res_booker_views.reservation_selector, name='booking'),
     path("book/cancel/<int:resID>", online_res_booker_views.reservation_deleter),
 
 
     # WAITSTAFFS VIEWER URLS
     path("view/TimeslotGenerator", waitstaff_res_viewer_views.timeslot_generator),
-    path("view/dashboard", waitstaff_res_viewer_views.dashboard),
-    path("view/update/<int:resID>", waitstaff_res_viewer_views.reservation_updater)
+    path("view/dashboard", waitstaff_res_viewer_views.dashboard, name='dashboard'),
+    path("view/update/<int:resID>", waitstaff_res_viewer_views.reservation_updater),
+
+    #WELCOME PAGES
+    #path("welcome/", views.welcome, name='welcome'),
+    #path("welcome/contactus/", views.contact, name='contact')
 
 ]

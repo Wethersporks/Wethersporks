@@ -24,14 +24,14 @@
     </header>
     <nav>
         <a href="#" class="nav__button">Menu</a>
-        <a href="#" class="nav__button">Find Us</a>
+        <a href="#" class="nav__button">Contact Us</a>
         <a href="#" class="nav__button">Reservations</a>
 
     </nav>
     <main>
         <div class="main__container">
             <div class="book__a__table">
-                
+
                 {% if not date_selected %}
                 <h2>Pick a day:</h2>
                 {% else %}
@@ -41,33 +41,35 @@
                 <div class="main__container__center">
                     <form method="get">
                         {% if error %}
-                            <p style="color: red;">{{error}}</p>
+                        <p style="color: red;">{{error}}</p>
                         {% endif %}
                         <ul>
                             {% if not date_selected %}
                             <!-- Date Selection -->
                             <h2>Date</h2>
-                            <input type="date" name="date" id="guestDate" required/>
+                            <input type="date" name="date" id="guestDate" required />
 
                             <h2>Email</h2>
-                            <input type="email" name="email" id="email" required/>
+                            <input type="email" name="email" id="email" required />
 
                             {% else %}
                             <!-- Time & Quantity Selection -->
-                            <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}" alt="Clock icon"></h2>
-                            
+                            <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}"
+                                    alt="Clock icon"></h2>
+
                             <select name="time" type="datetime" required>
                                 {% for timeslot in timeslots %}
                                 <option value="{{timeslot}}">{{timeslot}}</option>
                                 {% endfor %}
                             </select>
-                            
-                            <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}" alt="Guests icon"></h2>
-                            <input name="guestCount" type="number" required/>
+
+                            <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}"
+                                    alt="Guests icon"></h2>
+                            <input name="guestCount" type="number" required />
 
                             <!-- Used to retain date & email inputted  -->
-                            <input name="date" value="{{date_selected}}" hidden/> 
-                            <input name="email" value="{{email_inputted}}" hidden/>
+                            <input name="date" value="{{date_selected}}" hidden />
+                            <input name="email" value="{{email_inputted}}" hidden />
                             {% endif %}
                         </ul>
                         <br>
@@ -80,8 +82,16 @@
         </div>
     </main>
     <footer>
-        <a href="Index.html">Home</a>
-        @2025
+        <img src="{% static 'imgs/WethersporksLogoWhite.png' %}" class="footer__logo" alt="WethersporksLogo">
+        <div class="footer__links">
+            <a href="{% url 'booking'%}">Home</a>
+            <a href="#">Menu</a>
+            <a href="#">Find Us</a>
+            <a href="#">Reservations</a>
+            Wethersporks @2025
+        </div>
+
     </footer>
 </body>
+
 </html>
