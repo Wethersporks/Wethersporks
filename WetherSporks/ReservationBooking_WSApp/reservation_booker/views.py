@@ -12,10 +12,10 @@ import datetime
 # API-Call Functions 
 
 def reservation_deleter(request, resID):
-    """ Reservation Booker / ReservationDeleter (Cancellation)
+    """ Online Booking Subsystem / Reservation Booker / Email / Cancellation Handler / Reservation Deleter Component
     Sent here through email """    
 
-    # NOTE - This needs to be secured by adding a customer authentication before manipulating this reservation data
+    # TODO - This needs to be secured by adding a customer authentication before manipulating this reservation data
     bs = BookingScheduler()
     res = bs.cancel_reservation(Reservation.objects.filter(res_id = resID).first())
     content = {}
@@ -31,7 +31,7 @@ def reservation_deleter(request, resID):
 
 
 def reservation_selector(request):
-    """ Reservation Booker / Reservation Selector Component """
+    """ Online Booking Subsystem / Reservation Booker / Reservation Selector Component """
  
     bs = BookingScheduler()
 
@@ -76,15 +76,14 @@ def reservation_selector(request):
     
     return render(request, "ReservationBooking/ReservationSelector.html", content)
 
-def dashboard(request):
-    return render(request, 'Dashboard.html')
 
-def booking(request):
-    return render(request, 'ReservationSelector.html')
 
 def welcome(request):
-    return render(request, 'WElcomePage.html')
+    """ Online Booking Subsystem / Welcome Page Component
+        URL: localhost:8000/reservations/ """
+    return render(request, 'ReservationBooking/WelcomePage.html')
 
 def contact(request):
-    return render(request, 'ContactPage.html')
-
+    """ Online Booking Subsystem / Contact Page Component
+        URL: localhost:8000/reservations/contact """
+    return render(request, 'ReservationBooking/ContactPage.html')
