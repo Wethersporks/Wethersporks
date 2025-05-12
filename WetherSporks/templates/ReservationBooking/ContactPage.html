@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wethersporks - Welcome Page</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+
+<body>
+    <header>
+        <a href="Index.html">
+            <img src="{% static 'imgs/WethersporksLogoWhite.png' %}" alt="WethersporksLogo" class="logo">
+        </a>
+        <h1>
+            <a href="Index.html" class="weathersporks__title">Weathersporks</a>
+        </h1>
+        <div class="opentimes">Open 10am-10pm</div>
+
+    </header>
+    <nav>
+        <a href="#" class="nav__button">Menu</a>
+        <a href="#" class="nav__button">Contact Us</a>
+        <a href="#" class="nav__button">Reservations</a>
+
+    </nav>
+    <main>
+        <div class="dboard__main">
+            <div class="dboard__main__center">
+                <h2>
+                    Please contact us in these ways:
+                    Phone: (insert number here)
+                    Email: (insert email here)
+                    Address: (add address here)
+                </h2>
+
+            </div>
+        </div>
+
+        </div>
+    </main>
+    <footer>
+        <img src="{% static 'imgs/WethersporksLogoWhite.png' %}" class="footer__logo" alt="WethersporksLogo">
+        <div class="footer__links">
+            <a href="{% url 'booking'%}">Home</a>
+            <a href="#">Menu</a>
+            <a href="#">Find Us</a>
+            <a href="#">Reservations</a>
+            Wethersporks @2025
+        </div>
+
+    </footer>
+</body>
+
+</html>
