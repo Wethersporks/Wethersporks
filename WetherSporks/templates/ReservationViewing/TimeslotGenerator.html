@@ -1,0 +1,16 @@
+
+<h1>Timeslot Generator</h1>
+
+<h2>{{start}} TO {{end}}</h2>
+<h3>Timeslots created: </h3>
+<ul>
+    {% for timeslot in timeslots %}
+        {% if timeslot %}
+            <li>{{ timeslot }}</li>
+        {% else %}
+            <li>Time slot wasnt made - may already exist</li>
+        {% endif %}
+        
+    {% endfor %}
+
+</ul>

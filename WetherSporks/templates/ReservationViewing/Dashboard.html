@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wethersporks - Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+
+<body>
+    <header>
+        <a href="{% url 'dashboard'%}">
+            <img src="{% static 'imgs/WethersporksLogoWhite.png' %}" alt="WethersporksLogo" class="logo">
+        </a>
+        <h1>
+            <a href="{% url 'dashboard'%}" class="weathersporks__title">Weathersporks</a>
+        </h1>
+    </header>
+    <nav>
+        <a href="{% url 'dashboard'%}" class="nav__button">Dashboard</a>
+        <a href="{% url 'booking'%}" class="nav__button">Make Reservation</a>
+
+    </nav>
+    <main>
+        <div class="dboard__main">
+            <div class="dboard__main__center">
+                <form method="get">
+                    <label>Select a date:</label>
+                    <input type="date" name="date" />
+                    <button>See Dates Timeslots</button>
+                </form>
+                <h2> Todays Reservations: {{date}} </h2>
+                <!-- TIMESLOTS -->
+                {% for timeslot in timeslots %}
+                <hr>
+                <h3>{{timeslot.0.start_time}}-{{timeslot.0.end_time}}</h3>
+
+                <!-- RESERVATIONS -->
+                <br>
+                {% if timeslot.2 %}
+                <h4>Reservations Made</h4>
+                <ul>
+                    {% for res in timeslot.2 %}
+                    <li>
+                        {{res}}
+                    </li>
+                    {% endfor %}
+
+                </ul>
+                <br>
+                {% endif %}
+
+                <!-- REMAINING FREE TABLES FOR TIMESLOT -->
+                <h4>Available Tables Remaining</h4>
+                <ul>
+                    {% for table in timeslot.1 %}
+                    <li>
+                        Table {{ table }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                <br>
+                <br>
+                {% endfor %}
+
+            </div>
+        </div>
+    </main>
+</body>
