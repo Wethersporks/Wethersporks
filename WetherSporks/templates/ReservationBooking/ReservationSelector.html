@@ -41,7 +41,7 @@
                 <div class="main__container__center">
                     <form method="get">
                         {% if error %}
-                        <p style="color: red;">{{error}}</p>
+                        <p id="error" style="color: red;">{{error}}</p>
                         {% endif %}
                         <ul>
                             {% if not date_selected %}
@@ -57,7 +57,7 @@
                             <h2>Time <img style="height:30px; width:auto" src="{% static 'imgs/icoclock.png' %}"
                                     alt="Clock icon"></h2>
 
-                            <select name="time" type="datetime" required>
+                            <select id="time" name="time" type="datetime" required>
                                 {% for timeslot in timeslots %}
                                 <option value="{{timeslot}}">{{timeslot}}</option>
                                 {% endfor %}
@@ -65,15 +65,15 @@
 
                             <h2>Guests <img style="height:30px; width:auto;" src="{% static 'imgs/icoguest.png' %}"
                                     alt="Guests icon"></h2>
-                            <input name="guestCount" type="number" required />
+                            <input id="guestCount" name="guestCount" type="number" required />
 
                             <!-- Used to retain date & email inputted  -->
                             <input name="date" value="{{date_selected}}" hidden />
-                            <input name="email" value="{{email_inputted}}" hidden />
+                            <input name="email"  value="{{email_inputted}}" hidden />
                             {% endif %}
                         </ul>
                         <br>
-                        <button type="submit">Next</button>
+                        <button id="next_btn" type="submit">Next</button>
                     </form>
 
                 </div>

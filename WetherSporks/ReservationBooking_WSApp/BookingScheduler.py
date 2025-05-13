@@ -85,7 +85,7 @@ class BookingScheduler(object):
                 time_slot.occupy_table(table)
                 time_slot.save()
 
-                EMAILING_SYSTEM_ON = True
+                EMAILING_SYSTEM_ON = False
                 if EMAILING_SYSTEM_ON:
                     send_email(customer.email, 
                             data=f"""Your reservation has been booked! 
