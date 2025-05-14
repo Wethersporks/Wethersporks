@@ -37,7 +37,7 @@ class ResTest(LiveServerTestCase):
         self.driver.find_element(by=By.ID, value="email").send_keys("100715281@unimail.derby.ac.uk") 
         self.driver.find_element(by=By.ID, value="next_btn").click()
 
-        # WAIT FOR RESPONSE
+        
         time.sleep(2)
         self.driver.find_element(by=By.ID, value="time").send_keys("12")
 
@@ -45,14 +45,14 @@ class ResTest(LiveServerTestCase):
         self.driver.find_element(by=By.ID, value="guestCount").send_keys("7")
         self.driver.find_element(by=By.ID, value="next_btn").click()
 
-
+        # WAIT FOR RESPONSE
+        time.sleep(2)
 
         # NOTE: ASSERTIONS BELOW
         # Assert error message exists first
         elements = self.driver.find_elements(by=By.ID, value="error")
         print(len(elements))
         self.assertNotEqual(len(elements), 0, "No Error Messages found on booking page with invalid input")
-
         # Assert 4a error message: System displays the restaurant’s contact details, saying that large 
         # bookings must be made in person or through a Waitstaff or Manager
         self.assertIn("Bookings of more than 7 must be made in person!", elements[0].text, 

@@ -61,6 +61,8 @@ class BookingScheduler(object):
 
     def append_reservation(self, customer:Customer, guest_count, date, time) -> Union[BookingError, None]:
         time_slot:TimeSlot = self.__get_timeslot(date, time)
+        if int(guest_count) > 6:
+            return BookingError("Bookings of more than 7 must be made in person!")
         
         if time_slot:
             if Reservation.objects.filter(customer=customer, timeslot=time_slot).first():
